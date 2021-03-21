@@ -30,7 +30,7 @@ Table person {
   observation varchar(1024)
   
   created_by varchar(128) [not null]
-  createt_time datetime [not null]
+  created_time datetime [not null]
 }
 
 Table entrance {

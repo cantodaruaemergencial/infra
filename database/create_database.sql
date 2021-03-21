@@ -29,7 +29,7 @@ CREATE TABLE `person` (
   `demands` varchar(1024),
   `observation` varchar(1024),
   `created_by` varchar(128) NOT NULL,
-  `createt_time` datetime NOT NULL
+  `created_time` datetime NOT NULL
 );
 
 CREATE TABLE `entrance` (
