@@ -10,3 +10,8 @@ terraform apply
 + services to enable on gcp:
   + `cloudresourcemanager.googleapis.com`
   + `artifactregistry.googleapis.com`
+  + `sqladmin.googleapis.com`
+  + `run.googleapis.com`
+  + `compute.googleapis.com`
+  + `servicenetworking.googleapis.com`
+  + `vpcaccess.googleapis.com`
