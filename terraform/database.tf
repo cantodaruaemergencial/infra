@@ -1,5 +1,5 @@
 resource "google_sql_database_instance" "db" {
-  name             = "cantodarua-db"
+  name             = "${var.project}_db"
   database_version = "MYSQL_8_0"
   region           = var.region
 
