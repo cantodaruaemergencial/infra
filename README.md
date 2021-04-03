@@ -6,3 +6,7 @@ terraform init
 terraform plan
 terraform apply
 ```
+
++ services to enable on gcp:
+  + `cloudresourcemanager.googleapis.com`
+  + `artifactregistry.googleapis.com`
