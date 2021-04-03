@@ -1,0 +1,15 @@
+terraform {
+  backend "gcs" {
+    bucket = "cantodarua_tfstate"
+  }
+}
+
+provider "google" {
+  project = var.project
+  region  = var.region
+  zone    = var.zone
+}
+
+provider "google-beta" {
+  project = var.project
+}
