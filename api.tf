@@ -22,6 +22,14 @@ resource "google_cloud_run_service" "api" {
           name  = "DATABASE_PASSWORD"
           value = random_id.password.hex
         }
+        env {
+          name = "GOOGLE_CLIENT_ID"
+          value = var.google_client_id
+        }
+        env {
+          name = "GOOGLE_CLIENT_SECRET"
+          value = var.google_client_secret
+        }
       }
     }
   }

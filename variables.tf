@@ -11,3 +11,11 @@ variable "zone" {
   type    = string
   default = "us-east1-d"
 }
+
+variable "google_client_id" {
+  type = string
+}
+
+variable "google_client_secret" {
+  type = string
+}
