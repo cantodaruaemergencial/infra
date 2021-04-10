@@ -7,16 +7,16 @@ terraform plan
 terraform apply
 ```
 
-+ services to enable on gcp:
-  + `cloudresourcemanager.googleapis.com`
-  + `artifactregistry.googleapis.com`
++ **services to enable on gcp:**
+  + `cloudresourcemanager.googleapis.com`  
   + `sqladmin.googleapis.com`
   + `run.googleapis.com`
   + `compute.googleapis.com`
   + `servicenetworking.googleapis.com`
   + `vpcaccess.googleapis.com`
+  + `cloudbuild.googleapis.com`
 
-+ permissions needed on ci-cd service account
++ **permissions needed on automation custom role**:
   + `artifactregistry.repositories.create`
   + `artifactregistry.repositories.delete`
   + `artifactregistry.repositories.get`
@@ -50,3 +50,12 @@ terraform apply
   + `storage.objects.list`
   + `storage.objects.setIamPolicy`
   + `storage.objects.update`
+
++ **roles service account need**:
+  + custom role above
+  + `Cloud Build Editor`
+  + `Service Account User`
+  + `Cloud Run Admin`
+  + `Viewer`
+
++ create oauth consent screen

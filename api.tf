@@ -1,11 +1,11 @@
 resource "google_cloud_run_service" "api" {
-  name     = "${var.project}-api"
+  name     = "api"
   location = var.region
 
   template {
     spec {
       containers {
-        image = "${local.api_artifact_repo}:latest"
+        image = "gcr.io/cloudrun/placeholder"
         env {
           name  = "DATABASE_HOST"
           value = google_sql_database_instance.db.public_ip_address
