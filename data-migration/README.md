@@ -1,5 +1,5 @@
 + **person**
 
 ```bash
-dotnet run person sample.csv
+dotnet run person sample.tsv > output.sql
 ```

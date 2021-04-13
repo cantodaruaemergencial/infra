@@ -7,10 +7,10 @@ namespace data_migration
 {
     public static class Util
     {
-        public static List<List<string>> ReadCsv(string path)
+        public static List<List<string>> ReadCsv(string path, char separator)
         {
             var ls = File.ReadAllLines(path);
-            var csv = (from li in ls select (li.Split(',').ToList())).Skip(1).ToList();
+            var csv = (from li in ls select (li.Split(separator).ToList())).Skip(1).ToList();
             return csv;
         }
 
@@ -22,8 +22,20 @@ namespace data_migration
 
         public static string ReadString(this string s)
         {
-            s = s.Replace(';', '\0');
+            if (s.Length > 0 && s[s.Length - 1] == ';')
+                s = s.Substring(0, s.Length - 1);
+            if (s.Length > 0 && s[s.Length - 1] == '.')
+                s = s.Substring(0, s.Length - 1);
             return string.IsNullOrWhiteSpace(s) ? "null" : $"'{s}'";
         }
+
+        public static string ReadLongString(this string s) =>
+            string.IsNullOrWhiteSpace(s) ? "null" : $"'{s}'";
+
+        public static string ReadBool(this string s) =>
+            s.ToLower() == "s" ? "1" : "0";
+
+        public static string ReadInt(this string s) => s;
+
     }
 }
