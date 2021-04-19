@@ -15,11 +15,3 @@ resource "google_sql_user" "user" {
   host     = "%"
   password = random_id.password.hex
 }
-
-output "database_instance" {
-  value = google_sql_database_instance.db.name
-}
-
-output "database_schema" {
-  value = google_sql_database.schema.name
-}
