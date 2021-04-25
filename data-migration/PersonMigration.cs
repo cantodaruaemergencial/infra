@@ -5,7 +5,6 @@ namespace data_migration
 {
     public static class PersonMigration
     {
-
         private static string header =
             "insert into people (" +
                 "Preferential, " +
@@ -39,12 +38,26 @@ namespace data_migration
                 "Observation" +
             ")";
 
+        private static List<string> CardNumbers;
+        private static List<string> Names;
+
         public static string Do(List<List<string>> m)
         {
             var sql = header + " values ";
             var row = 0;
+            Names = new List<string>();
+            CardNumbers = new List<string>();
             foreach (var p in m)
-                sql += DoLine(p, ++row) + ", ";
+            {
+                var line = DoLine(p, ++row);
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("FALHA AO IMPORTAR");
+                    return "";
+                }
+                sql += line + ", ";
+            }
             return (sql.Substring(0, sql.Length - 2) + ";").Sanitize();
         }
 
@@ -66,10 +79,21 @@ namespace data_migration
             if (!schoolTraining.ValidateSchoolTraining(row))
                 return "";
 
+            var cardNumber = li[3].ReadString();
+            if (!cardNumber.ValidateList(CardNumbers, row, "número cadastro"))
+                return "";
+
+            var name = li[4].ReadString();
+            if (!name.ValidateList(Names, row, "nome"))
+                return "";
+
+            CardNumbers.Add(cardNumber);
+            Names.Add(name);
+
             return "(" +
                 $"{li[2].ReadBool()}," + // Preferential
-                $"{li[3].ReadString()}," + // CardNumber
-                $"{li[4].ReadString()}," + // Name
+                $"{cardNumber}," + // CardNumber
+                $"{name}," + // Name
                 $"{li[5].ReadString()}," + // SocialName
                 $"{li[6].ReadDate()}," + // BirthDate
                 $"{li[7].ReadString()}," + // MotherName

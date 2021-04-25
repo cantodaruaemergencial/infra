@@ -12,6 +12,7 @@ namespace data_migration
             {
                 var m = Util.ReadCsv(args[1], separator);
                 var s = PersonMigration.Do(m);
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine(s);
             }
         }

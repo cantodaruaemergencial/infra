@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace data_migration
@@ -21,10 +22,23 @@ namespace data_migration
             {"analfabeto", "assina o nome", "fundamental incompleto", "fundamental completo",
             "ensino médio incompleto", "ensino médio completo", "superior incompleto", "superior completo"});
 
+        public static bool ValidateList(this string s, List<string> list, int row, string field)
+        {
+            if (list.Any(s1 => s1.ToLower() == s.ToLower()))
+            {
+                var row1 = list.IndexOf(list.FirstOrDefault(s1 => s1.ToLower() == s.ToLower())) + 1;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"{field} ({s}) repetido nas linhas {row} e {row1}");
+                return false;
+            }
+            return true;
+        }
+
         private static bool Validate(this string s, int row, string field, string[] avaibles)
         {
-            if (!avaibles.Contains(s.ToLower().Replace("'", "")))
+            if (!avaibles.Any(s1 => s1.ToLower() == s.ToLower().Replace("'", "")))
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"Linha {row} - {field} inválido: {s.ToLower()}");
                 return false;
             }
