@@ -69,7 +69,7 @@ resource "google_cloud_run_service" "api" {
   template {
     spec {
       containers {
-        image = "gcr.io/cloudrun/placeholder"
+        image = "gcr.io/cantodarua/api:0f7df278c0683c590812a14eb3bb9054c0b9bcc6"
         env {
           name  = "DATABASE_HOST"
           value = google_sql_database_instance.db.public_ip_address

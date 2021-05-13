@@ -30,7 +30,7 @@ resource "google_cloud_run_service" "api_mvp" {
   template {
     spec {
       containers {
-        image = "gcr.io/cloudrun/placeholder"
+        image = "gcr.io/cantodarua/api-mvp:d5f5db97f99e41c2a73d7be9cdc9ce8999e8c355"        
         env {
           name  = "DATABASE_HOST"
           value = google_sql_database_instance.db.public_ip_address
@@ -70,4 +70,32 @@ resource "google_cloud_run_service_iam_member" "api_mvp" {
 
 output "api_mvp_url" {
   value = google_cloud_run_service.api_mvp.status[0].url
+}
+
+resource "google_cloud_run_service" "app_mvp" {
+  name     = "app-mvp"
+  location = var.region
+
+  template {
+    spec {
+      containers {
+        image = "gcr.io/cantodarua/app-mvp:test1"
+        ports {
+          container_port = 3000
+        }
+      }
+    }
+  }
+  autogenerate_revision_name = true
+}
+
+resource "google_cloud_run_service_iam_member" "app_mvp" {
+  service  = google_cloud_run_service.app_mvp.name
+  location = google_cloud_run_service.app_mvp.location
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+output "app_mvp_url" {
+  value = google_cloud_run_service.app_mvp.status[0].url
 }
