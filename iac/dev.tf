@@ -1,73 +1,53 @@
-resource "google_sql_database" "schema_dev" {
-  name     = "${var.project}-db-dev"
-  project  = var.project
-  instance = google_sql_database_instance.db.name
+module "database_dev" {
+  source = "./modules/mysql_schema"
+
+  project                = var.project
+  name                   = "${var.project}-db-dev"
+  database_instance_name = google_sql_database_instance.db.name
 }
 
-resource "random_id" "password_dev" {
-  byte_length = 16
+output "dev_database" {
+  value = module.database_dev.credentials
 }
 
-resource "google_sql_user" "user_dev" {
-  name     = "${var.project}-user-dev"
-  project  = var.project
-  instance = google_sql_database_instance.db.name
-  host     = "%"
-  password = random_id.password_dev.hex
-}
+module "api_dev" {
+  source = "./modules/cloud_run"
 
-output "database_credentials_dev" {
-  value = {
-    user = google_sql_user.user_dev.name
-    pass = random_id.password_dev.hex
-  }
-}
+  project               = var.project
+  region                = var.region
+  name                  = "api-dev"
+  image                 = "gcr.io/cantodarua/api-dev:e6bc4793194d1a24c0d3e695148763e338a18e20"
+  url                   = "api-dev.cantodaruaemergencial.com.br"
+  dns_managed_zone_name = var.dns_managed_zone_name
 
-resource "google_cloud_run_service" "api_dev" {
-  name     = "api-dev"
-  location = var.region
-
-  template {
-    spec {
-      containers {
-        image = "gcr.io/cantodarua/api-dev:e6bc4793194d1a24c0d3e695148763e338a18e20"
-        env {
-          name  = "DATABASE_HOST"
-          value = google_sql_database_instance.db.public_ip_address
-        }
-        env {
-          name  = "DATABASE_NAME"
-          value = google_sql_database.schema_dev.name
-        }
-        env {
-          name  = "DATABASE_USERNAME"
-          value = google_sql_user.user_dev.name
-        }
-        env {
-          name  = "DATABASE_PASSWORD"
-          value = random_id.password_dev.hex
-        }
-        env {
-          name  = "GOOGLE_CLIENT_ID"
-          value = var.google_client_id
-        }
-        env {
-          name  = "GOOGLE_CLIENT_SECRET"
-          value = var.google_client_secret
-        }
-      }
+  env_vars = [
+    {
+      name  = "DATABASE_HOST"
+      value = google_sql_database_instance.db.public_ip_address
+    },
+    {
+      name  = "DATABASE_NAME"
+      value = module.database_dev.credentials.name
+    },
+    {
+      name  = "DATABASE_USERNAME"
+      value = module.database_dev.credentials.user
+    },
+    {
+      name  = "DATABASE_PASSWORD"
+      value = module.database_dev.credentials.pass
+    },
+    {
+      name  = "GOOGLE_CLIENT_ID"
+      value = var.google_client_id
+    },
+    {
+      name  = "GOOGLE_CLIENT_SECRET"
+      value = var.google_client_secret
     }
-  }
-  autogenerate_revision_name = true
+  ]
 }
 
-resource "google_cloud_run_service_iam_member" "api_dev" {
-  service  = google_cloud_run_service.api_dev.name
-  location = google_cloud_run_service.api_dev.location
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
-
-output "api_dev_url" {
-  value = google_cloud_run_service.api_dev.status[0].url
+output "dev_api" {
+  value = module.api_dev.urls
 }
