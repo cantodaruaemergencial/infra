@@ -30,7 +30,7 @@ resource "google_cloud_run_service" "api_mvp" {
   template {
     spec {
       containers {
-        image = "gcr.io/cantodarua/api-mvp:d5f5db97f99e41c2a73d7be9cdc9ce8999e8c355"        
+        image = "gcr.io/cantodarua/api-mvp:d5f5db97f99e41c2a73d7be9cdc9ce8999e8c355"
         env {
           name  = "DATABASE_HOST"
           value = google_sql_database_instance.db.public_ip_address
@@ -79,7 +79,7 @@ resource "google_cloud_run_service" "app_mvp" {
   template {
     spec {
       containers {
-        image = "gcr.io/cantodarua/app-mvp:test1"
+        image = "gcr.io/cantodarua/app-mvp:3957c76f7805cc859da8146a07304d8759b235d5"
         ports {
           container_port = 3000
         }
@@ -95,6 +95,33 @@ resource "google_cloud_run_service_iam_member" "app_mvp" {
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
+
+resource "google_cloud_run_domain_mapping" "app_mvp" {
+  location = var.region
+  name     = "app-mvp.cantodaruaemergencial.com.br"
+
+  metadata {
+    namespace = var.project
+  }
+
+  spec {
+    route_name     = google_cloud_run_service.app_mvp.name
+    force_override = true
+  }
+}
+
+resource "google_dns_record_set" "cname_app_mvp" {
+  provider     = google-beta
+  depends_on   = [google_cloud_run_service.app_mvp]
+  project      = var.project
+  name         = "app-mvp.cantodaruaemergencial.com.br."
+  managed_zone = var.dns_managed_zone_name
+  type         = "CNAME"
+  ttl          = 300
+  rrdatas      = ["ghs.googlehosted.com."]
+}
+
+
 
 output "app_mvp_url" {
   value = google_cloud_run_service.app_mvp.status[0].url

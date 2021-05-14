@@ -98,6 +98,12 @@ terraform apply
   - `storage.objects.list`
   - `storage.objects.setIamPolicy`
   - `storage.objects.update`
+  - `dns.resourceRecordSets.create`
+  - `dns.resourceRecordSets.delete`
+  - `dns.resourceRecordSets.list`
+  - `dns.resourceRecordSets.update`
+
+- **TO-DO** @matheusaraujo verificar permissões
 
 - **roles service account need**:
 
