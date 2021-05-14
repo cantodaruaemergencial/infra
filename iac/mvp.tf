@@ -1,4 +1,4 @@
-module "database_mvp" {
+module "db_schema_mvp" {
   source = "./modules/mysql_schema"
 
   project                = var.project
@@ -6,8 +6,8 @@ module "database_mvp" {
   database_instance_name = google_sql_database_instance.db.name
 }
 
-output "mvp_database" {
-  value = module.database_mvp.credentials
+output "mvp_db_schema" {
+  value = module.db_schema_mvp.credentials
 }
 
 module "api_mvp" {
@@ -27,15 +27,15 @@ module "api_mvp" {
     },
     {
       name  = "DATABASE_NAME"
-      value = module.database_mvp.credentials.name
+      value = module.db_schema_mvp.credentials.name
     },
     {
       name  = "DATABASE_USERNAME"
-      value = module.database_mvp.credentials.user
+      value = module.db_schema_mvp.credentials.user
     },
     {
       name  = "DATABASE_PASSWORD"
-      value = module.database_mvp.credentials.pass
+      value = module.db_schema_mvp.credentials.pass
     },
     {
       name  = "GOOGLE_CLIENT_ID"

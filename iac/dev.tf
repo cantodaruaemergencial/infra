@@ -1,4 +1,4 @@
-module "database_dev" {
+module "db_schema_dev" {
   source = "./modules/mysql_schema"
 
   project                = var.project
@@ -6,8 +6,8 @@ module "database_dev" {
   database_instance_name = google_sql_database_instance.db.name
 }
 
-output "dev_database" {
-  value = module.database_dev.credentials
+output "dev_db_schema" {
+  value = module.db_schema_dev.credentials
 }
 
 module "api_dev" {
@@ -27,15 +27,15 @@ module "api_dev" {
     },
     {
       name  = "DATABASE_NAME"
-      value = module.database_dev.credentials.name
+      value = module.db_schema_dev.credentials.name
     },
     {
       name  = "DATABASE_USERNAME"
-      value = module.database_dev.credentials.user
+      value = module.db_schema_dev.credentials.user
     },
     {
       name  = "DATABASE_PASSWORD"
-      value = module.database_dev.credentials.pass
+      value = module.db_schema_dev.credentials.pass
     },
     {
       name  = "GOOGLE_CLIENT_ID"
