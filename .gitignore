@@ -71,3 +71,5 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+data-migration/cadastro.tsv
+data-migration/output.sql

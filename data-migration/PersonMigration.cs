@@ -3,8 +3,22 @@ using System.Collections.Generic;
 
 namespace data_migration
 {
-    public static class PersonMigration
+    public class PersonMigration
     {
+        private readonly MigrationResult result;
+
+        public PersonMigration()
+        {
+            result = new MigrationResult()
+            {
+                EmptyLines = 0,
+                ImportedLines = 0,
+                Query = "",
+                RepeatedNames = 0,
+                RepeatedNumbers = 0
+            };
+        }
+
         private static string header =
             "insert into people (" +
                 "Preferential, " +
@@ -38,10 +52,10 @@ namespace data_migration
                 "Observation" +
             ")";
 
-        private static List<string> CardNumbers;
-        private static List<string> Names;
+        private List<string> CardNumbers;
+        private List<string> Names;
 
-        public static string Do(List<List<string>> m)
+        public MigrationResult Do(List<List<string>> m)
         {
             var sql = header + " values ";
             var row = 0;
@@ -50,47 +64,44 @@ namespace data_migration
             foreach (var p in m)
             {
                 var line = DoLine(p, ++row);
-                if (line == "-1")
+                if (line == "-1") continue;
+                else if (!string.IsNullOrWhiteSpace(line))
                 {
-                    continue;
-                }
-                else if (string.IsNullOrWhiteSpace(line))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("FALHA AO IMPORTAR");
-                    return "";
+                    result.ImportedLines++;
+                    sql += line + ", ";
                 }
                 else
                 {
-                    sql += line + ", ";
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("FALHA AO IMPORTAR");
+                    result.Query = "FAILED";
+                    return result;
                 }
             }
-            return (sql.Substring(0, sql.Length - 2) + ";").Sanitize();
+            result.Query = (sql.Substring(0, sql.Length - 2) + ";").Sanitize();
+            return result;
         }
 
-        private static string DoLine(List<string> li, int row)
+        private string DoLine(List<string> li, int row)
         {
             try
             {
                 var skinColor = li[11].ReadString().PreValidateSkinColor();
-                if (!skinColor.ValidateSkinColor(row))
-                    return "";
+                if (!skinColor.ValidateSkinColor(row)) return "";
 
                 var gender = li[12].ReadString();
-                if (!gender.ValidateGender(row))
-                    return "";
+                if (!gender.ValidateGender(row)) return "";
 
                 var maritalStatus = li[25].ReadString().PreValidateMaritalStatus();
-                if (!maritalStatus.ValidateMaritalStatus(row))
-                    return "";
+                if (!maritalStatus.ValidateMaritalStatus(row)) return "";
 
                 var schoolTraining = li[26].ReadString().PreValidateSchoolTraining();
-                if (!schoolTraining.ValidateSchoolTraining(row))
-                    return "";
+                if (!schoolTraining.ValidateSchoolTraining(row)) return "";
 
                 var cardNumber = li[3].ReadString();
                 if (!cardNumber.ValidateList(CardNumbers, row, "Número Cadastro"))
                 {
+                    result.RepeatedNumbers++;
                     return "-1";
                 }
 
@@ -98,12 +109,14 @@ namespace data_migration
 
                 if (name == "null")
                 {
+                    result.EmptyLines++;
                     Console.WriteLine($"Linha {row} - Nome vazio");
                     return "-1";
                 }
 
                 if (!name.ValidateList(Names, row, "Nome"))
                 {
+                    result.RepeatedNames++;
                     return "-1";
                 }
 
@@ -118,8 +131,8 @@ namespace data_migration
                     $"{li[6].ReadDate()}," + // BirthDate
                     $"{li[7].ReadString()}," + // MotherName
                     $"{li[8].ReadString()}," + // BirthPlace
-                    $"(select id from skin_colors where SkinColor = {skinColor})," + // skin_color
-                    $"(select id from genders where Gender = {gender})," + // gender
+                    skinColor == "null" ? "null," : $"(select id from skin_colors where SkinColor = {skinColor})," + // skin_color
+                    gender == "null" ? "null," : $"(select id from genders where Gender = {gender})," + // gender
                     $"{li[11].ReadInt()}," + // Childrens
                     $"{li[12].ReadBool()}," + // HasHabitation
                     $"{li[13].ReadString()}," + // HomelessTime
@@ -132,8 +145,8 @@ namespace data_migration
                     $"{li[20].ReadString()}," + // Cpf
                     $"{li[21].ReadBool()}," + // HasCtps
                     $"{li[22].ReadBool()}," + // HasBirthCertificate
-                    $"(select id from marital_statuses where MaritalStatus = {maritalStatus})," + // marital_status
-                    $"(select id from school_trainings where SchoolTraining = {schoolTraining})," + // school_training
+                    maritalStatus == "null" ? "null," : $"(select id from marital_statuses where MaritalStatus = {maritalStatus})," + // marital_status
+                    schoolTraining == "null" ? "null," : $"(select id from school_trainings where SchoolTraining = {schoolTraining})," + // school_training
                     $"{li[28].ReadLongString()}," + // ReferenceLocation
                     $"{li[29].ReadString()}," + // Occupation
                     $"{li[30].ReadString()}," + // Profession

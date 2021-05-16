@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace data_migration
 {
@@ -11,9 +12,15 @@ namespace data_migration
             if (args[0] == "person")
             {
                 var m = Util.ReadCsv(args[1], separator);
-                var s = PersonMigration.Do(m);
+                var s = new PersonMigration().Do(m);
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(s);
+
+                Console.WriteLine($"Importados - {s.ImportedLines}");
+                Console.WriteLine($"Nomes vazios - {s.EmptyLines}");
+                Console.WriteLine($"Nomes repetidos - {s.RepeatedNames}");
+                Console.WriteLine($"Números repetidos - {s.RepeatedNumbers}");
+
+                File.WriteAllText("output.sql", s.Query);
             }
         }
     }
