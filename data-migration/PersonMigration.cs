@@ -5,11 +5,11 @@ namespace data_migration
 {
     public class PersonMigration
     {
-        private readonly MigrationResult result;
+        private readonly PersonMigrationResult result;
 
         public PersonMigration()
         {
-            result = new MigrationResult()
+            result = new PersonMigrationResult()
             {
                 EmptyLines = 0,
                 ImportedLines = 0,
@@ -55,7 +55,7 @@ namespace data_migration
         private List<string> CardNumbers;
         private List<string> Names;
 
-        public MigrationResult Do(List<List<string>> m)
+        public PersonMigrationResult Do(List<List<string>> m)
         {
             var sql = header + " values ";
             var row = 0;
@@ -107,7 +107,7 @@ namespace data_migration
 
                 var name = li[4].ReadString();
 
-                if (name == "null")
+                if (name == "null" || name.Length <= 5)
                 {
                     result.EmptyLines++;
                     Console.WriteLine($"Linha {row} - Nome vazio");
@@ -129,30 +129,30 @@ namespace data_migration
                     $"{name}," + // Name
                     $"{li[5].ReadString()}," + // SocialName
                     $"{li[6].ReadDate()}," + // BirthDate
-                    $"{li[7].ReadString()}," + // MotherName
-                    $"{li[8].ReadString()}," + // BirthPlace
-                    skinColor == "null" ? "null," : $"(select id from skin_colors where SkinColor = {skinColor})," + // skin_color
-                    gender == "null" ? "null," : $"(select id from genders where Gender = {gender})," + // gender
-                    $"{li[11].ReadInt()}," + // Childrens
-                    $"{li[12].ReadBool()}," + // HasHabitation
-                    $"{li[13].ReadString()}," + // HomelessTime
-                    $"{li[14].ReadBool()}," + // HasEmergencyAid
-                    $"{li[15].ReadBool()}," + // HasPbhBasket
-                    $"{li[16].ReadBool()}," + // HasUniqueRegister
-                    $"{li[17].ReadBool()}," + // HasGeneralRegister
-                    $"{li[18].ReadString()}," + // GeneralRegister
-                    $"{li[19].ReadBool()}," + // HasCpf
-                    $"{li[20].ReadString()}," + // Cpf
-                    $"{li[21].ReadBool()}," + // HasCtps
-                    $"{li[22].ReadBool()}," + // HasBirthCertificate
-                    maritalStatus == "null" ? "null," : $"(select id from marital_statuses where MaritalStatus = {maritalStatus})," + // marital_status
-                    schoolTraining == "null" ? "null," : $"(select id from school_trainings where SchoolTraining = {schoolTraining})," + // school_training
-                    $"{li[28].ReadLongString()}," + // ReferenceLocation
-                    $"{li[29].ReadString()}," + // Occupation
-                    $"{li[30].ReadString()}," + // Profession
-                    $"{li[31].ReadString()}," + // ContactPhone
-                    $"{li[32].ReadString()}," + // ReferenceAddress
-                    $"{li[34].ReadLongString()}" + // Observation
+                    $"{li[9].ReadString()}," + // MotherName
+                    $"{li[10].ReadString()}," + // BirthPlace
+                    (skinColor.Replace("'", "").Equals("null") ? "null," : $"(select id from skin_colors where SkinColor = {skinColor}),") + // skin_color
+                    (gender.Replace("'", "").Equals("null") ? "null," : $"(select id from genders where Gender = {gender}),") + // gender
+                    $"{li[13].ReadInt()}," + // Childrens
+                    $"{li[14].ReadBool()}," + // HasHabitation
+                    $"{li[15].ReadString()}," + // HomelessTime
+                    $"{li[16].ReadBool()}," + // HasEmergencyAid
+                    $"{li[17].ReadBool()}," + // HasPbhBasket
+                    $"{li[18].ReadBool()}," + // HasUniqueRegister
+                    $"{li[19].ReadBool()}," + // HasGeneralRegister
+                    $"{li[20].ReadString()}," + // GeneralRegister
+                    $"{li[21].ReadBool()}," + // HasCpf
+                    $"{li[22].ReadString()}," + // Cpf
+                    $"{li[23].ReadBool()}," + // HasCtps
+                    $"{li[24].ReadBool()}," + // HasBirthCertificate
+                    (maritalStatus.Replace("'", "").Equals("null") ? "null," : $"(select id from marital_statuses where MaritalStatus = {maritalStatus}),") + // marital_status
+                    (schoolTraining.Replace("'", "").Equals("null") ? "null," : $"(select id from school_trainings where SchoolTraining = {schoolTraining}),") + // school_training
+                    $"{li[30].ReadLongString()}," + // ReferenceLocation
+                    $"{li[31].ReadString()}," + // Occupation
+                    $"{li[32].ReadString()}," + // Profession
+                    $"{li[33].ReadString()}," + // ContactPhone
+                    $"{li[34].ReadString()}," + // ReferenceAddress
+                    $"{li[35].ReadLongString()}" + // Observation
                 ")";
             }
             catch (Exception ex)

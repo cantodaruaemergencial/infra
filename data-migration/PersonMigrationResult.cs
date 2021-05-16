@@ -1,6 +1,6 @@
 namespace data_migration
 {
-    public class MigrationResult
+    public class PersonMigrationResult
     {
         public int EmptyLines { get; set; }
         public int RepeatedNames { get; set; }

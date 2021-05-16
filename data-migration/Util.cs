@@ -20,10 +20,26 @@ namespace data_migration
 
         public static string ReadDate(this string s)
         {
-            if (string.IsNullOrEmpty(s)) return "null";
-            var d = s.Split("/");
+            if (string.IsNullOrEmpty(s) || s.IndexOf("/") == -1) return "null";
+            var d = s.Split("/").Select(o => int.Parse(o)).ToArray();
             if (d.Length != 3) return "null";
-            return $"'{d[2]}-{d[1]}-{d[0]}'";
+            try
+            {
+                var dt = new DateTime(d[2], d[1], d[0]);
+                return $"'{d[2]}-{d[1]}-{d[0]}'";
+            }
+            catch
+            {
+                try
+                {
+                    var dt = new DateTime(d[2], d[0], d[1]);
+                    return $"'{d[2]}-{d[0]}-{d[1]}'";
+                }
+                catch
+                {
+                    return "null";
+                }
+            }
         }
 
         public static string ReadString(this string s)
@@ -32,16 +48,22 @@ namespace data_migration
                 s = s.Substring(0, s.Length - 1);
             if (s.Length > 0 && s[s.Length - 1] == '.')
                 s = s.Substring(0, s.Length - 1);
+            s = s.Replace("'", "\\'");
             return string.IsNullOrWhiteSpace(s) ? "null" : $"'{s.Trim()}'";
         }
 
         public static string ReadLongString(this string s) =>
-            string.IsNullOrWhiteSpace(s) ? "null" : $"'{s}'";
+            string.IsNullOrWhiteSpace(s) ? "null" : $"'{s.Replace("'", "\\'")}'";
 
         public static string ReadBool(this string s) =>
             s.ToLower() == "s" ? "1" : "0";
 
-        public static string ReadInt(this string s) => s;
+        public static string ReadInt(this string s)
+        {
+            if (int.TryParse(s, out int r))
+                return r.ToString();
+            return "null";
+        }
 
         public static string SpellingCheck(this string s, List<(string, string)> cs)
         {
