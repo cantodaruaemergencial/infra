@@ -20,7 +20,7 @@ namespace data_migration
                 Console.WriteLine($"Nomes repetidos - {s.RepeatedNames}");
                 Console.WriteLine($"Números repetidos - {s.RepeatedNumbers}");
 
-                File.WriteAllText("output.sql", s.Query);
+                File.WriteAllText("output-person.sql", s.Query);
             }
         }
     }
