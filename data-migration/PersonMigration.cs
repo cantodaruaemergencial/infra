@@ -77,8 +77,15 @@ namespace data_migration
                     result.Query = "FAILED";
                     return result;
                 }
+                if (row > 0 && row % 500 == 0)
+                {
+                    sql = (sql.Substring(0, sql.Length - 2) + ";").Sanitize();
+                    sql += header + " values ";
+                }
             }
-            result.Query = (sql.Substring(0, sql.Length - 2) + ";").Sanitize();
+            sql = (sql.Substring(0, sql.Length - (sql.EndsWith("values ") ? 0 : 2)) + ";").Sanitize();
+            sql += "update people set published_at = now(), created_at = now(), updated_at = now();";
+            result.Query = sql;
             return result;
         }
 
