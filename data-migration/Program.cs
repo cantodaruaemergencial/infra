@@ -11,14 +11,25 @@ namespace data_migration
 
             if (args[0] == "person")
             {
-                var m = Util.ReadCsv(args[1], separator);
+                var m = Util.ReadCsv(args[1], separator, 1);
                 var s = new PersonMigration().Do(m);
-                Console.ForegroundColor = ConsoleColor.White;
 
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine($"Importados - {s.ImportedLines}");
                 Console.WriteLine($"Nomes vazios - {s.EmptyLines}");
                 Console.WriteLine($"Nomes repetidos - {s.RepeatedNames}");
                 Console.WriteLine($"Números repetidos - {s.RepeatedNumbers}");
+                File.WriteAllText(args[1].Replace("tsv", "sql").Replace("csv", "sql"), s.Query);
+            }
+            else if (args[0] == "entrance")
+            {
+                var m = Util.ReadCsv(args[1], separator, 0);
+                var s = new EntranceMigration().Do(m);
+
+                Console.ForegroundColor = ConsoleColor.White;
+
+                Console.WriteLine($"Importados - {s.ImportedLines}");
+                Console.WriteLine($"Linhas vazias - {s.EmptyLines}");
 
                 File.WriteAllText(args[1].Replace("tsv", "sql").Replace("csv", "sql"), s.Query);
             }

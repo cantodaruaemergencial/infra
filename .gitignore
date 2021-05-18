@@ -73,3 +73,5 @@ msbuild.wrn
 .vs/
 data-migration/cadastro*.tsv
 data-migration/cadastro*.sql
+data-migration/entradas*.tsv
+data-migration/entradas*.sql

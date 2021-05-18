@@ -8,10 +8,10 @@ namespace data_migration
 {
     public static class Util
     {
-        public static List<List<string>> ReadCsv(string path, char separator)
+        public static List<List<string>> ReadCsv(string path, char separator, int skip)
         {
             var ls = File.ReadAllLines(path);
-            var csv = (from li in ls select (li.Split(separator).ToList())).Skip(1).ToList();
+            var csv = (from li in ls select (li.Split(separator).ToList())).Skip(skip).ToList();
             return csv;
         }
 
