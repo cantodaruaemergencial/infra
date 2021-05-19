@@ -24,7 +24,8 @@ namespace data_migration
             else if (args[0] == "entrance")
             {
                 var m = Util.ReadCsv(args[1], separator, 0);
-                var s = new EntranceMigration().Do(m);
+                int c = int.Parse(args[2]);
+                var s = new EntranceMigration(c).Do(m);
 
                 Console.ForegroundColor = ConsoleColor.White;
 

@@ -8,9 +8,11 @@ namespace data_migration
         private List<string> dates;
         private EntranceMigrationResult result;
 
+        private int nameColumn = 2;
+
         private static string header = "insert into person_entrances (person, datetime)";
 
-        public EntranceMigration()
+        public EntranceMigration(int nameColumn)
         {
             result = new EntranceMigrationResult()
             {
@@ -19,6 +21,7 @@ namespace data_migration
                 Query = ""
             };
             dates = new List<string>();
+            this.nameColumn = nameColumn;
         }
 
         public EntranceMigrationResult Do(List<List<string>> m)
@@ -29,7 +32,7 @@ namespace data_migration
 
             for (int i = 1; i < m.Count; i++)
             {
-                if (m[i][2] == "")
+                if (m[i][nameColumn] == "")
                 {
                     result.EmptyLines++;
                     Console.WriteLine($"Linha {i} - Nome vazio");
@@ -60,17 +63,17 @@ namespace data_migration
         public string DoLine(List<string> li)
         {
             string sql = "";
-            for (int i = 3; i < li.Count; i++)
+            for (int i = nameColumn + 1; i < li.Count; i++)
             {
                 if (li[i] != "")
-                    sql += $"((select id from people where name like {li[2].ReadString()} order by id limit 1), '{dates[i - 3]}'), ";
+                    sql += $"((select id from people where name like {li[nameColumn].ReadString()} order by id limit 1), '{dates[i - (nameColumn + 1)]}'), ";
             }
             return sql;
         }
 
         private void ReadHeader(List<List<string>> m)
         {
-            int i = 3;
+            int i = nameColumn + 1;
             while (i < m[0].Count)
                 dates.Add(m[0][i++]);
         }
