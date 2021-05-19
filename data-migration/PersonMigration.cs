@@ -33,6 +33,7 @@ namespace data_migration
                 "Childrens, " +
                 "HasHabitation, " +
                 "HomelessTime, " +
+                "HomelessSince, " +
                 "HasEmergencyAid, " +
                 "HasPbhBasket, " +
                 "HasUniqueRegister, " +
@@ -130,6 +131,13 @@ namespace data_migration
                 CardNumbers.Add(cardNumber);
                 Names.Add(name);
 
+                string homelessSince = "null";
+                int homelessDays = li[15].ReadString().CalculateHomelessDays();
+                if (homelessDays != -1)
+                {
+                    homelessSince = "'" + DateTime.Now.Date.AddDays(-homelessDays).ToString("yyyy-MM-dd") + "'";
+                }
+
                 return "(" +
                     $"{li[2].ReadBool()}," + // Preferential
                     $"{cardNumber}," + // CardNumber
@@ -143,6 +151,7 @@ namespace data_migration
                     $"{li[13].ReadInt()}," + // Childrens
                     $"{li[14].ReadBool()}," + // HasHabitation
                     $"{li[15].ReadString()}," + // HomelessTime
+                    $"{homelessSince}," + // HomelessSince
                     $"{li[16].ReadBool()}," + // HasEmergencyAid
                     $"{li[17].ReadBool()}," + // HasPbhBasket
                     $"{li[18].ReadBool()}," + // HasUniqueRegister

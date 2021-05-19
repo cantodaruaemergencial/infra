@@ -94,5 +94,37 @@ namespace data_migration
             s.ToLower().Equals("s/i") ||
             s.ToLower().Equals("não informou") ||
             s.ToLower().Equals("não");
+
+        public static int CalculateHomelessDays(this string s)
+        {
+            s = s.Replace("'", "").ToLower().TrimEnd();
+
+            int d = s.CalculateHomelessDays(1, "dias", "dia");
+            if (d != -1) return d;
+
+            d = s.CalculateHomelessDays(7, "semanas", "semana");
+            if (d != -1) return d;
+
+            d = s.CalculateHomelessDays(30, "meses", "mes", "mês");
+            if (d != -1) return d;
+
+            d = s.CalculateHomelessDays(365, "anos", "ano");
+            if (d != -1) return d;
+
+            return -1;
+        }
+
+        private static int CalculateHomelessDays(this string s, int factor, params string[] ends)
+        {
+            foreach (var e in ends)
+            {
+                if (s.EndsWith(e))
+                {
+                    s = s.Replace(e, "");
+                    return int.TryParse(s, out int i) ? i * factor : -1;
+                }
+            }
+            return -1;
+        }
     }
 }
