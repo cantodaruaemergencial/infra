@@ -65,6 +65,8 @@ namespace data_migration
             return "null";
         }
 
+        public static bool IsInt(this string s) => int.TryParse(s, out int r);
+
         public static string SpellingCheck(this string s, List<(string, string)> cs)
         {
             foreach (var c in cs)

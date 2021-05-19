@@ -34,6 +34,19 @@ namespace data_migration
 
                 File.WriteAllText(args[1].Replace("tsv", "sql").Replace("csv", "sql"), s.Query);
             }
+            else if (args[0] == "service")
+            {
+                var m = Util.ReadCsv(args[1], separator, 1);
+
+                var s = new ServiceMigration().Do(m);
+
+                Console.ForegroundColor = ConsoleColor.White;
+
+                Console.WriteLine($"Importados - {s.ImportedLines}");
+                Console.WriteLine($"Linhas vazias - {s.EmptyLines}");
+
+                File.WriteAllText(args[1].Replace("tsv", "sql").Replace("csv", "sql"), s.Query);
+            }
         }
     }
 }

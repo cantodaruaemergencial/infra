@@ -77,3 +77,5 @@ cadastro*.tsv
 cadastro*.sql
 entradas*.tsv
 entradas*.sql
+servicos*.tsv
+servicos*.sql
