@@ -43,7 +43,7 @@ resource "google_cloud_run_domain_mapping" "mapping" {
   }
 }
 
-resource "google_dns_record_set" "cname_app_mvp" {
+resource "google_dns_record_set" "cname" {
   provider     = google-beta
   depends_on   = [google_cloud_run_service.cloud_run]
   project      = var.project
@@ -52,4 +52,19 @@ resource "google_dns_record_set" "cname_app_mvp" {
   type         = "CNAME"
   ttl          = 300
   rrdatas      = ["ghs.googlehosted.com."]
+}
+
+resource "google_cloud_run_domain_mapping" "mapping2" {
+  count    = var.url2 == "" ? 0 : 1
+  location = var.region
+  name     = var.url2
+
+  metadata {
+    namespace = var.project
+  }
+
+  spec {
+    route_name     = google_cloud_run_service.cloud_run.name
+    force_override = true
+  }
 }

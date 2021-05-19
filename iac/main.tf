@@ -90,3 +90,20 @@ module "api" {
 output "api" {
   value = module.api.urls
 }
+
+module "app" {
+  source = "./modules/cloud_run"
+
+  project               = var.project
+  region                = var.region
+  name                  = "app"
+  image                 = "gcr.io/cantodarua/app-mvp:72a7938214f4ffda54e72ba56fc7d3ed741b38bc"
+  url                   = "www.cantodaruaemergencial.com.br"
+  url2                  = "cantodaruaemergencial.com.br"
+  dns_managed_zone_name = var.dns_managed_zone_name
+  container_port        = 3000
+}
+
+output "app" {
+  value = module.app.urls
+}

@@ -16,7 +16,7 @@ module "api_mvp" {
   project               = var.project
   region                = var.region
   name                  = "api-mvp"
-  image                 = "gcr.io/cantodarua/api-mvp:6a10e4ff7bc50b8500098013dd717d3f62fce895"
+  image                 = "gcr.io/cantodarua/api-mvp:aabce75f32e186ea9771dfcb3ee893cdb2712f4a"
   url                   = "api-mvp.cantodaruaemergencial.com.br"
   dns_managed_zone_name = var.dns_managed_zone_name
 
@@ -58,8 +58,8 @@ module "app_mvp" {
   project               = var.project
   region                = var.region
   name                  = "app-mvp"
-  image                 = "gcr.io/cantodarua/app-mvp:c627329e56b4bd6309ae66d9cce6cf531ff7a486"
-  url                   = "app-mvp.cantodaruaemergencial.com.br"
+  image                 = "gcr.io/cantodarua/app-mvp:72a7938214f4ffda54e72ba56fc7d3ed741b38bc"
+  url                   = "mvp.cantodaruaemergencial.com.br"
   dns_managed_zone_name = var.dns_managed_zone_name
   container_port        = 3000
 }
