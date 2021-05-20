@@ -105,7 +105,7 @@ module "app" {
 
   env_vars = [
     {
-      name  = "API_URL"
+      name  = "NEXT_PUBLIC_STRAPI_API_URL"
       value = module.api.urls.public_url
     }
   ]
